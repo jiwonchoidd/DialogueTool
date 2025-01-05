@@ -38,7 +38,7 @@ public class DDDialogue : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				// ... add private dependencies that you statically link with here ...	
+				"UnrealEd",       // UFactory와 관련된 주요 모듈
 			}
 			);
 		

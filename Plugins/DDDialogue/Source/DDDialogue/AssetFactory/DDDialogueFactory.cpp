@@ -4,12 +4,14 @@
 #include "DDDialogueFactory.h"
 
 #include "DDDialogue/DialogueGraph/DDDialogueGraph.h"
+#include "DDDialogue/DialogueGraph/FDDialogueEditor.h"
 
 UDDDialogueFactory::UDDDialogueFactory()
 {
 	SupportedClass = UDDDialogueGraph::StaticClass();
 	bCreateNew = true;
 	bEditAfterNew = true;
+	
 }
 
 UObject* UDDDialogueFactory::FactoryCreateNew(UClass* Class, UObject* InParent, FName Name, EObjectFlags Flags,
@@ -28,7 +30,7 @@ uint32 FDDDialogue_AssetTypeActions::GetCategories()
 
 FText FDDDialogue_AssetTypeActions::GetName() const
 {
-	return NSLOCTEXT("AssetTypeActions", "FAssetTypeActions_Graph", "Dialogue_Graph");
+	return NSLOCTEXT("AssetTypeActions", "DDDialogue_AssetTypeName", "DD Dialogue");
 }
 
 UClass* FDDDialogue_AssetTypeActions::GetSupportedClass() const
@@ -39,4 +41,24 @@ UClass* FDDDialogue_AssetTypeActions::GetSupportedClass() const
 FColor FDDDialogue_AssetTypeActions::GetTypeColor() const
 {
 	return FColor::Purple;
+}
+
+const FSlateBrush* FDDDialogue_AssetTypeActions::GetIconBrush(const FAssetData& InAssetData,
+	const FName InClassName) const
+{
+	return nullptr;
+}
+
+const FSlateBrush* FDDDialogue_AssetTypeActions::GetThumbnailBrush(const FAssetData& InAssetData,
+	const FName InClassName) const
+{
+	return FAssetTypeActions_Base::GetThumbnailBrush(InAssetData, InClassName);
+}
+
+void FDDDialogue_AssetTypeActions::OpenAssetEditor(const TArray<UObject*>& InObjects,
+	TSharedPtr<IToolkitHost> EditWithinLevelEditor)
+{
+	// 그래프 에디터를 여는 로직
+	TSharedRef<FDDialogueEditor> DialogueEditor = MakeShared<FDDialogueEditor>();
+	DialogueEditor->OpenDialogueEditor(InObjects, EditWithinLevelEditor);
 }
