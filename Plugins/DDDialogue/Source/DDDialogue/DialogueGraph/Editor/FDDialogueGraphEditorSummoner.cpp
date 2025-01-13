@@ -24,7 +24,7 @@ void FDDialogueGraphEditorSummoner::OnTabRefreshed(TSharedPtr<SDockTab> Tab) con
 
 TAttribute<FText> FDDialogueGraphEditorSummoner::ConstructTabNameForObject(UEdGraph* Graph) const
 {
-	return FText::FromString(Graph->GetName());
+	return TAttribute<FText>(FText::FromString(Graph->GetName()));
 }
 
 TSharedRef<SWidget> FDDialogueGraphEditorSummoner::CreateTabBodyForObject(const FWorkflowTabSpawnInfo& Info,

@@ -4,6 +4,7 @@
 
 #include "Modules/ModuleManager.h"
 
+#define LOCTEXT_NAMESPACE "FDDDialogueModule"
 DECLARE_LOG_CATEGORY_EXTERN(DDDialogue, Log, All);
 
 class FDDDialogueModule : public IModuleInterface

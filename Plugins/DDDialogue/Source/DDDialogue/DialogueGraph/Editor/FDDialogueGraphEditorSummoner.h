@@ -16,8 +16,8 @@ protected:
 	virtual TAttribute<FText> ConstructTabNameForObject(UEdGraph* Graph) const override;
 	virtual TSharedRef<SWidget> CreateTabBodyForObject(const FWorkflowTabSpawnInfo& Info, UEdGraph* DocumentID) const override;
 	virtual const FSlateBrush* GetTabIconForObject(const FWorkflowTabSpawnInfo& Info, UEdGraph* DocumentID) const override;
-	virtual void SaveState(TSharedPtr<SDockTab> Tab, TSharedPtr<FTabPayload> Payload) const override;
 
+	virtual void SaveState(TSharedPtr<SDockTab> Tab, TSharedPtr<FTabPayload> Payload) const override;
 protected:
 	TWeakPtr<class FDDialogueEditor> DialogueEditorPtr = nullptr;
 	FOnCreateGraphEditorWidget OnCreateGraphEditorWidget;

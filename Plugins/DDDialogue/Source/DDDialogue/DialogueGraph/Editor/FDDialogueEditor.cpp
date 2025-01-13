@@ -85,7 +85,7 @@ TSharedRef<SGraphEditor> FDDialogueEditor::CreateGraphEditorWidget(UEdGraph* InG
 		.FillWidth(1.f)
 		[
 			SNew(STextBlock)
-			.Text(TEXT("Dialogue Editor"))
+			.Text(LOCTEXT("TitleBar", "TEST Title"))
 		.TextStyle(FAppStyle::Get(), TEXT("GraphBreadcrumbButtonText"))
 		]
 		];
