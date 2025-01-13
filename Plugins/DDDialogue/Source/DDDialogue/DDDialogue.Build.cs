@@ -38,7 +38,12 @@ public class DDDialogue : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"UnrealEd",       // UFactory와 관련된 주요 모듈
+				"UnrealEd", // UFactory와 관련된 주요 모듈
+				"GraphEditor",
+				"PropertyEditor",
+				"Kismet",
+				"InputCore",
+				"ApplicationCore",
 			}
 			);
 		

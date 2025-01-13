@@ -11,6 +11,11 @@
 TSharedPtr<FDDDialogue_AssetTypeActions> Actions;
 TSharedPtr<FSlateStyleSet> Styles;
 
+DEFINE_LOG_CATEGORY(DDDialogue);
+/*
+ *	https://easycomplex-tech.com/blog/Unreal/AssetEditor/UEAssetEditorDev-AssetEditorGraph/
+ * 
+ */
 void FDDDialogueModule::StartupModule()
 {
 	IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
@@ -50,6 +55,11 @@ void FDDDialogueModule::ShutdownModule()
 			Actions.Reset();
 		}
 	}	
+}
+
+bool FDDDialogueModule::IsPIENotSimulating()
+{
+	return !GEditor->bIsSimulatingInEditor && (GEditor->PlayWorld == NULL);
 }
 
 #undef LOCTEXT_NAMESPACE

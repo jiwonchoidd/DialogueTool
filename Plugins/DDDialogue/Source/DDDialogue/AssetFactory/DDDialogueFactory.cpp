@@ -3,23 +3,21 @@
 
 #include "DDDialogueFactory.h"
 
-#include "DDDialogue/DialogueGraph/DDDialogueGraph.h"
-#include "DDDialogue/DialogueGraph/FDDialogueEditor.h"
+#include "DDDialogueDataAsset.h"
+#include "DDDialogue/DialogueGraph/Editor/FDDialogueEditor.h"
 
 UDDDialogueFactory::UDDDialogueFactory()
 {
-	SupportedClass = UDDDialogueGraph::StaticClass();
+	SupportedClass = UDDDialogueDataAsset::StaticClass();
 	bCreateNew = true;
 	bEditAfterNew = true;
-	
 }
 
 UObject* UDDDialogueFactory::FactoryCreateNew(UClass* Class, UObject* InParent, FName Name, EObjectFlags Flags,
 	UObject* Context, FFeedbackContext* Warn)
 {
-	return NewObject<UDDDialogueGraph>(InParent, Class, Name, Flags);
+	return NewObject<UDDDialogueDataAsset>(InParent, Class, Name, Flags);
 }
-
 
 //------------------------------------------------------------------------------
 
@@ -35,7 +33,7 @@ FText FDDDialogue_AssetTypeActions::GetName() const
 
 UClass* FDDDialogue_AssetTypeActions::GetSupportedClass() const
 {
-	return UDDDialogueGraph::StaticClass();
+	return UDDDialogueDataAsset::StaticClass();
 }
 
 FColor FDDDialogue_AssetTypeActions::GetTypeColor() const
@@ -58,7 +56,6 @@ const FSlateBrush* FDDDialogue_AssetTypeActions::GetThumbnailBrush(const FAssetD
 void FDDDialogue_AssetTypeActions::OpenAssetEditor(const TArray<UObject*>& InObjects,
 	TSharedPtr<IToolkitHost> EditWithinLevelEditor)
 {
-	// 그래프 에디터를 여는 로직
 	TSharedRef<FDDialogueEditor> DialogueEditor = MakeShared<FDDialogueEditor>();
 	DialogueEditor->OpenDialogueEditor(InObjects, EditWithinLevelEditor);
 }
