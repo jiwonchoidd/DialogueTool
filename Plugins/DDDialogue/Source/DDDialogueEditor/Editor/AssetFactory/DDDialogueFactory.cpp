@@ -3,8 +3,9 @@
 
 #include "DDDialogueFactory.h"
 
-#include "DDDialogueDataAsset.h"
-#include "DDDialogue/DialogueGraph/Editor/FDDialogueEditor.h"
+#include "DDDialogue/Dialogue/DDDialogueDataAsset.h"
+#include "DDDialogueEditor/Editor/FDDialogueEditor.h"
+#include "DDDialogueEditor/Editor/FDDialogueEditorStyle.h"
 
 UDDDialogueFactory::UDDDialogueFactory()
 {
@@ -28,7 +29,7 @@ uint32 FDDDialogue_AssetTypeActions::GetCategories()
 
 FText FDDDialogue_AssetTypeActions::GetName() const
 {
-	return NSLOCTEXT("AssetTypeActions", "DDDialogue_AssetTypeName", "DD Dialogue");
+	return NSLOCTEXT("AssetTypeActions", "DDDialogue_AssetTypeName", "DDDialogue");
 }
 
 UClass* FDDDialogue_AssetTypeActions::GetSupportedClass() const
@@ -38,19 +39,19 @@ UClass* FDDDialogue_AssetTypeActions::GetSupportedClass() const
 
 FColor FDDDialogue_AssetTypeActions::GetTypeColor() const
 {
-	return FColor::Purple;
+	return FColor::White;
 }
 
 const FSlateBrush* FDDDialogue_AssetTypeActions::GetIconBrush(const FAssetData& InAssetData,
 	const FName InClassName) const
 {
-	return nullptr;
+	return FDDialogueEditorStyle::Get().GetBrush(StyleNamespace::Icon);
 }
 
 const FSlateBrush* FDDDialogue_AssetTypeActions::GetThumbnailBrush(const FAssetData& InAssetData,
 	const FName InClassName) const
 {
-	return FAssetTypeActions_Base::GetThumbnailBrush(InAssetData, InClassName);
+	return FDDialogueEditorStyle::Get().GetBrush(StyleNamespace::Icon);
 }
 
 void FDDDialogue_AssetTypeActions::OpenAssetEditor(const TArray<UObject*>& InObjects,

@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class DDDIALOGUE_API UDDDialogueFactory : public UFactory
+class DDDIALOGUEEDITOR_API UDDDialogueFactory : public UFactory
 {
 	GENERATED_BODY()
 

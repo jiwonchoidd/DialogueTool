@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "WorkflowOrientedApp/WorkflowUObjectDocuments.h"
-#include "EdGraph/EdGraph.h" // IWYU pragma: keep
+#include "EdGraph/EdGraph.h"
 
 struct FDDialogueGraphEditorSummoner : public FDocumentTabFactoryForObjects<UEdGraph>
 {

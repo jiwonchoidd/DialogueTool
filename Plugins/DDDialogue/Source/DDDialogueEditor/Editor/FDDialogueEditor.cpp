@@ -1,8 +1,9 @@
 ﻿#include "FDDialogueEditor.h"
 
+#include "FDDialogueEditorStyle.h"
 #include "FDDialogueGraphEditorSummoner.h"
 #include "DDDialogue/DDDialogue.h"
-#include "DDDialogue/AssetFactory/DDDialogueDataAsset.h"
+#include "DDDialogue/Dialogue/DDDialogueDataAsset.h"
 
 const FName AppIdentifier("DDDialogueEditorApp");
 
@@ -51,6 +52,11 @@ class UDDDialogueDataAsset* FDDialogueEditor::GetDialogueGraphObj() const
 }
 
 //-------------------------------------------------------------------------------------
+
+const FSlateBrush* FDDialogueEditor::GetDefaultTabIcon() const
+{
+	return FDDialogueEditorStyle::Get().GetBrush(StyleNamespace::Icon);
+}
 
 void FDDialogueEditor::OnSelectedNodesChanged(const FGraphPanelSelectionSet& _SelectionSet)
 {
@@ -128,5 +134,6 @@ FGraphAppearanceInfo FDDialogueEditor::GetGraphAppearance() const
 
 bool FDDialogueEditor::InEditingMode(bool bGraphIsEditable) const
 {
-	return bGraphIsEditable && FDDDialogueModule::IsPIENotSimulating();
+	const bool bPlayWorld = !GEditor->bIsSimulatingInEditor && (GEditor->PlayWorld == NULL);
+	return bGraphIsEditable && bPlayWorld;
 }

@@ -19,6 +19,7 @@ private:
 	virtual FText GetBaseToolkitName() const override { return FText::FromString("DD Dialogue Editor"); }
 	virtual FLinearColor GetWorldCentricTabColorScale() const override { return FLinearColor::White; }
 	virtual FString GetWorldCentricTabPrefix() const override { return TEXT("DDDialogueEditor"); }
+	virtual const FSlateBrush* GetDefaultTabIcon() const override;
 private:
 	/** Input Events */
 	void OnSelectedNodesChanged(const FGraphPanelSelectionSet& _SelectionSet);
