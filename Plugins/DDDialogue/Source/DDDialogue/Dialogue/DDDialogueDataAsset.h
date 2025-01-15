@@ -14,7 +14,7 @@ class DDDIALOGUE_API UDDDialogueDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, Category = "TestValue")
 	TArray<UDDDialogueDataAsset*> Children;
 	
 };

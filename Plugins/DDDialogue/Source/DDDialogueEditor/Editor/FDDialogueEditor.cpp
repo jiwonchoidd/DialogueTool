@@ -4,8 +4,11 @@
 #include "FDDialogueGraphEditorSummoner.h"
 #include "DDDialogue/DDDialogue.h"
 #include "DDDialogue/Dialogue/DDDialogueDataAsset.h"
+#include "WorkflowOrientedApp/WorkflowTabManager.h"
 
 const FName AppIdentifier("DDDialogueEditorApp");
+
+#define LOCTEXT_NAMESPACE "FDDialogueEditor"
 
 FDDialogueEditor::FDDialogueEditor()
 {
@@ -13,9 +16,26 @@ FDDialogueEditor::FDDialogueEditor()
 
 FDDialogueEditor::~FDDialogueEditor()
 {
+	if(DocumentTracker)
+	{
+		delete DocumentTracker;
+		DocumentTracker = nullptr;
+	}
 }
 
-void FDDialogueEditor::OpenDialogueEditor(const TArray<UObject*>& InObjects, const TSharedPtr<IToolkitHost>& EditWithinLevelEditor)
+void FDDialogueEditor::Initialize()
+{
+	DocumentTracker = new FDocumentTracker();
+	TSharedPtr<FDDialogueEditor> ThisPtr(SharedThis(this));
+	DocumentTracker->Initialize(ThisPtr);
+	TSharedRef<FDocumentTabFactory> GraphEditorFactory = MakeShareable(new FDDialogueGraphEditorSummoner(ThisPtr,
+		FDDialogueGraphEditorSummoner::FOnCreateGraphEditorWidget::CreateSP(this, &FDDialogueEditor::CreateGraphEditorWidget)
+	));
+	DocumentTracker->RegisterDocumentFactory(GraphEditorFactory);	
+}
+
+void FDDialogueEditor::OpenDialogueEditor(const TArray<UObject*>& InObjects,
+                                          const TSharedPtr<IToolkitHost>& EditWithinLevelEditor)
 {
 	DataAsset = Cast<UDDDialogueDataAsset>(InObjects[0]);
 
@@ -24,21 +44,15 @@ void FDDialogueEditor::OpenDialogueEditor(const TArray<UObject*>& InObjects, con
 		UE_LOG(DDDialogue, Warning, TEXT("FDDialogueEditor::OpenDialogueEditor Graph Object is Null.."));
 		return;
 	}
-
-	TSharedPtr<FDDialogueEditor> ThisPtr(SharedThis(this));
-	TSharedRef<FDocumentTabFactory> GraphEditorFactory = MakeShareable(new FDDialogueGraphEditorSummoner(ThisPtr,
-		FDDialogueGraphEditorSummoner::FOnCreateGraphEditorWidget::CreateSP(
-			this, &FDDialogueEditor::CreateGraphEditorWidget)
-	));
-
+	
 	const TSharedRef<FTabManager::FLayout> DummyLayout = FTabManager::NewLayout("NullLayout")->AddArea(
 		FTabManager::NewPrimaryArea());
-	constexpr bool bCreateDefaultStandaloneMenu = true;
-	constexpr bool bCreateDefaultToolbar = true;
 
 	TArray<UObject*> ObjectsToEdit;
 	ObjectsToEdit.Add(DataAsset);
 
+	constexpr bool bCreateDefaultStandaloneMenu = true;
+	constexpr bool bCreateDefaultToolbar = true;
 	InitAssetEditor(EToolkitMode::Standalone, EditWithinLevelEditor, AppIdentifier, DummyLayout,
 	                bCreateDefaultStandaloneMenu,
 	                bCreateDefaultToolbar, ObjectsToEdit);
@@ -61,6 +75,7 @@ const FSlateBrush* FDDialogueEditor::GetDefaultTabIcon() const
 void FDDialogueEditor::OnSelectedNodesChanged(const FGraphPanelSelectionSet& _SelectionSet)
 {
 }
+
 void FDDialogueEditor::OnNodeDoubleClicked(class UEdGraphNode* _GraphNode)
 {
 }
@@ -74,12 +89,13 @@ void FDDialogueEditor::OnNodeTitleCommitted(const FText& _Text, ETextCommit::Typ
 TSharedRef<SGraphEditor> FDDialogueEditor::CreateGraphEditorWidget(UEdGraph* InGraph)
 {
 	check(InGraph != NULL);
-	
+
 	SGraphEditor::FGraphEditorEvents InEvents;
-	InEvents.OnSelectionChanged = SGraphEditor::FOnSelectionChanged::CreateSP(this, &FDDialogueEditor::OnSelectedNodesChanged);
+	InEvents.OnSelectionChanged = SGraphEditor::FOnSelectionChanged::CreateSP(
+		this, &FDDialogueEditor::OnSelectedNodesChanged);
 	InEvents.OnNodeDoubleClicked = FSingleNodeEvent::CreateSP(this, &FDDialogueEditor::OnNodeDoubleClicked);
 	InEvents.OnTextCommitted = FOnNodeTextCommitted::CreateSP(this, &FDDialogueEditor::OnNodeTitleCommitted);
-	
+
 	TSharedRef<SWidget> TitleBarWidget =
 		SNew(SBorder)
 		.BorderImage(FAppStyle::GetBrush(TEXT("Graph.TitleBackground")))
@@ -87,48 +103,33 @@ TSharedRef<SGraphEditor> FDDialogueEditor::CreateGraphEditorWidget(UEdGraph* InG
 		[
 			SNew(SHorizontalBox)
 			+ SHorizontalBox::Slot()
-		.HAlign(HAlign_Center)
-		.FillWidth(1.f)
-		[
-			SNew(STextBlock)
-			.Text(LOCTEXT("TitleBar", "TEST Title"))
-		.TextStyle(FAppStyle::Get(), TEXT("GraphBreadcrumbButtonText"))
-		]
+			.HAlign(HAlign_Center)
+			.FillWidth(1.f)
+			[
+				SNew(STextBlock)
+				.Text(LOCTEXT("TitleBar", "TEST Title"))
+				.TextStyle(FAppStyle::Get(), TEXT("GraphBreadcrumbButtonText"))
+			]
 		];
-	
+
 	const bool bGraphIsEditable = InGraph->bEditable;
 	return SNew(SGraphEditor)
-	//.AdditionalCommands(GraphEditorCommands)
-	.IsEditable(this, &FDDialogueEditor::InEditingMode, bGraphIsEditable)
-	.Appearance(this, &FDDialogueEditor::GetGraphAppearance)
-	.TitleBar(TitleBarWidget)
-	.GraphToEdit(InGraph)
-	.GraphEvents(InEvents);
+				//.AdditionalCommands(GraphEditorCommands)
+	                         .IsEditable(this, &FDDialogueEditor::InEditingMode, bGraphIsEditable)
+	                         .Appearance(this, &FDDialogueEditor::GetGraphAppearance)
+	                         .TitleBar(TitleBarWidget)
+	                         .GraphToEdit(InGraph)
+	                         .GraphEvents(InEvents);
 }
 
 //-------------------------------------------------------------------------------------
 
 FGraphAppearanceInfo FDDialogueEditor::GetGraphAppearance() const
 {
+	// Temp Appearance..
 	FGraphAppearanceInfo AppearanceInfo;
-	//AppearanceInfo.CornerText = FText::FromString("Test");
-
-	/*
-	const int32 StepIdx = Debugger.IsValid() ? Debugger->GetShownStateIndex() : 0;
-	if (Debugger.IsValid() && !Debugger->IsDebuggerRunning())
-	{
-		AppearanceInfo.PIENotifyText = LOCTEXT("InactiveLabel", "INACTIVE");
-	}
-	else if (StepIdx)
-	{
-		AppearanceInfo.PIENotifyText = FText::Format(LOCTEXT("StepsBackLabelFmt", "STEPS BACK: {0}"), FText::AsNumber(StepIdx));
-	}
-	else if (FDDialogueEditor::IsPlaySessionPaused())
-	{
-		AppearanceInfo.PIENotifyText = LOCTEXT("PausedLabel", "PAUSED");
-	}
-	*/
-	
+	AppearanceInfo.CornerText = LOCTEXT("EditorUtilityAppearanceCornerText", "EDITOR UTILITY");
+	AppearanceInfo.InstructionText = LOCTEXT("AppearanceInstructionText_DefaultGraph", "Drag Off Pins to Create/Connect New Nodes.");
 	return AppearanceInfo;
 }
 
@@ -137,3 +138,5 @@ bool FDDialogueEditor::InEditingMode(bool bGraphIsEditable) const
 	const bool bPlayWorld = !GEditor->bIsSimulatingInEditor && (GEditor->PlayWorld == NULL);
 	return bGraphIsEditable && bPlayWorld;
 }
+
+#undef LOCTEXT_NAMESPACE

@@ -10,10 +10,11 @@ class FDDialogueEditor : public FWorkflowCentricApplication, public FNotifyHook
 public:
 	FDDialogueEditor();
 	virtual ~FDDialogueEditor() override;
-	
+public:
+	void Initialize();
 	void OpenDialogueEditor(const TArray<UObject*>& InObjects, const TSharedPtr<IToolkitHost>& EditWithinLevelEditor);
+public:
 	class UDDDialogueDataAsset* GetDialogueGraphObj() const;
-
 private:
 	virtual FName GetToolkitFName() const override { return FName("DDDialogueEditor"); }
 	virtual FText GetBaseToolkitName() const override { return FText::FromString("DD Dialogue Editor"); }
@@ -33,5 +34,5 @@ private:
 	bool InEditingMode(bool bGraphIsEditable) const;
 private:
 	class UDDDialogueDataAsset* DataAsset = nullptr;
+	class FDocumentTracker*		DocumentTracker = nullptr; 
 };
-

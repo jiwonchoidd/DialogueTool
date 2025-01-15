@@ -1,11 +1,8 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "DDDialogueFactory.h"
+﻿#include "DDDialogueFactory.h"
 
 #include "DDDialogue/Dialogue/DDDialogueDataAsset.h"
-#include "DDDialogueEditor/Editor/FDDialogueEditor.h"
-#include "DDDialogueEditor/Editor/FDDialogueEditorStyle.h"
+
+#define LOCTEXT_NAMESPACE "UDDDialogueFactory"
 
 UDDDialogueFactory::UDDDialogueFactory()
 {
@@ -20,43 +17,14 @@ UObject* UDDDialogueFactory::FactoryCreateNew(UClass* Class, UObject* InParent, 
 	return NewObject<UDDDialogueDataAsset>(InParent, Class, Name, Flags);
 }
 
-//------------------------------------------------------------------------------
-
-uint32 FDDDialogue_AssetTypeActions::GetCategories()
+FText UDDDialogueFactory::GetDisplayName() const
 {
-	return EAssetTypeCategories::Misc;
+	return LOCTEXT("DDDialogue Data", "Dialogue Data");
 }
 
-FText FDDDialogue_AssetTypeActions::GetName() const
+FText UDDDialogueFactory::GetToolTip() const
 {
-	return NSLOCTEXT("AssetTypeActions", "DDDialogue_AssetTypeName", "DDDialogue");
+	return Super::GetToolTip();
 }
 
-UClass* FDDDialogue_AssetTypeActions::GetSupportedClass() const
-{
-	return UDDDialogueDataAsset::StaticClass();
-}
-
-FColor FDDDialogue_AssetTypeActions::GetTypeColor() const
-{
-	return FColor::White;
-}
-
-const FSlateBrush* FDDDialogue_AssetTypeActions::GetIconBrush(const FAssetData& InAssetData,
-	const FName InClassName) const
-{
-	return FDDialogueEditorStyle::Get().GetBrush(StyleNamespace::Icon);
-}
-
-const FSlateBrush* FDDDialogue_AssetTypeActions::GetThumbnailBrush(const FAssetData& InAssetData,
-	const FName InClassName) const
-{
-	return FDDialogueEditorStyle::Get().GetBrush(StyleNamespace::Icon);
-}
-
-void FDDDialogue_AssetTypeActions::OpenAssetEditor(const TArray<UObject*>& InObjects,
-	TSharedPtr<IToolkitHost> EditWithinLevelEditor)
-{
-	TSharedRef<FDDialogueEditor> DialogueEditor = MakeShared<FDDialogueEditor>();
-	DialogueEditor->OpenDialogueEditor(InObjects, EditWithinLevelEditor);
-}
+#undef LOCTEXT_NAMESPACE

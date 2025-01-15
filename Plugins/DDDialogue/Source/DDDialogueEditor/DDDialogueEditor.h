@@ -3,8 +3,10 @@
 #include "CoreMinimal.h"
 
 /*
- * 에디터 전용 모듈 
- */ 
+ * 에디터 전용 모듈 - 참고
+ * https://easycomplex-tech.com/blog/Unreal/AssetEditor/UEAssetEditorDev-AssetEditorGraph/
+ */
+
 class FDDDialogueEditorModule : public IModuleInterface
 {
 public:

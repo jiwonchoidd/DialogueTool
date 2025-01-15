@@ -18,7 +18,7 @@
 		{
 			"Name": "DDDialogue",
 			"Type": "Runtime",
-			"LoadingPhase": "PreDefault"
+			"LoadingPhase": "Default"
 		},
 		{
 			"Name": "DDDialogueEditor",

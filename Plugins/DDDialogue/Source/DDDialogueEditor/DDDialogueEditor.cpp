@@ -1,15 +1,33 @@
 ﻿#include "DDDialogueEditor.h"
 
-#define LOCTEXT_NAMESPACE "FDDDialogueEditorModule"
+#include "AssetToolsModule.h"
+#include "Editor/AssetFactory/FDDDialogue_AssetTypeActions.h"
+
+TArray<TSharedPtr<FDDDialogue_AssetTypeActions>> AssetAction;
 
 void FDDDialogueEditorModule::StartupModule()
 {
+	const auto& Actions = MakeShared<FDDDialogue_AssetTypeActions>();
+	AssetAction.Emplace(Actions);
+
+	if (FAssetToolsModule* AssetToolsModule = FModuleManager::GetModulePtr<FAssetToolsModule>("AssetTools"))
+	{
+		for(auto Action : AssetAction)
+		{
+			AssetToolsModule->Get().RegisterAssetTypeActions(Action.ToSharedRef());
+		}
+	}
 }
 
 void FDDDialogueEditorModule::ShutdownModule()
 {
+	if (FAssetToolsModule* AssetToolsModule = FModuleManager::GetModulePtr<FAssetToolsModule>("AssetTools"))
+	{
+		for(auto Action : AssetAction)
+		{
+			AssetToolsModule->Get().UnregisterAssetTypeActions(Action.ToSharedRef());
+		}
+	}
 }
 
-#undef LOCTEXT_NAMESPACE
-    
 IMPLEMENT_MODULE(FDDDialogueEditorModule, DDDialogueEditor)

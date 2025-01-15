@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Factories/Factory.h"
-#include "AssetTypeActions_Base.h"
 #include "DDDialogueFactory.generated.h"
 
 /**
@@ -19,18 +18,8 @@ protected:
 	UDDDialogueFactory();
 private:
 	virtual UObject* FactoryCreateNew(UClass* Class, UObject* InParent, FName Name, EObjectFlags Flags, UObject* Context, FFeedbackContext* Warn) override;
+
+	virtual FText GetDisplayName() const override;
+	virtual FText GetToolTip() const override;
 };
 
-
-class FDDDialogue_AssetTypeActions : public FAssetTypeActions_Base
-{
-public:
-	virtual uint32 GetCategories() override;
-	virtual FText GetName() const override;
-	virtual UClass* GetSupportedClass() const override;
-	virtual FColor GetTypeColor() const override;
-	virtual const FSlateBrush* GetIconBrush(const FAssetData& InAssetData, const FName InClassName) const override;
-	virtual const FSlateBrush* GetThumbnailBrush(const FAssetData& InAssetData, const FName InClassName) const override;
-
-	virtual void OpenAssetEditor(const TArray<UObject*>& InObjects, TSharedPtr<IToolkitHost> EditWithinLevelEditor) override;
-};
