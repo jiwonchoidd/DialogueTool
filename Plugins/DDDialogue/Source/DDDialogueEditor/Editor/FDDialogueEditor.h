@@ -14,7 +14,7 @@ public:
 	void Initialize();
 	void OpenDialogueEditor(const TArray<UObject*>& InObjects, const TSharedPtr<IToolkitHost>& EditWithinLevelEditor);
 public:
-	class UDDDialogueDataAsset* GetDialogueGraphObj() const;
+	class UDDDialogueData* GetDialogueGraphObj() const;
 private:
 	virtual FName GetToolkitFName() const override { return FName("DDDialogueEditor"); }
 	virtual FText GetBaseToolkitName() const override { return FText::FromString("DD Dialogue Editor"); }
@@ -33,6 +33,6 @@ private:
 	FGraphAppearanceInfo GetGraphAppearance() const;
 	bool InEditingMode(bool bGraphIsEditable) const;
 private:
-	class UDDDialogueDataAsset* DataAsset = nullptr;
+	class UDDDialogueData*		DialogueData = nullptr;
 	class FDocumentTracker*		DocumentTracker = nullptr; 
 };

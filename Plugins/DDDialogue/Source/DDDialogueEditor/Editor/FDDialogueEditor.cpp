@@ -3,7 +3,10 @@
 #include "FDDialogueEditorStyle.h"
 #include "FDDialogueGraphEditorSummoner.h"
 #include "DDDialogue/DDDialogue.h"
-#include "DDDialogue/Dialogue/DDDialogueDataAsset.h"
+#include "DDDialogue/Dialogue/DDDialogueData.h"
+#include "DDDialogue/Dialogue/Graph/DDDialogueGraph.h"
+#include "DDDialogue/Dialogue/Graph/DDDialogueGraphSchema.h"
+#include "Kismet2/BlueprintEditorUtils.h"
 #include "WorkflowOrientedApp/WorkflowTabManager.h"
 
 const FName AppIdentifier("DDDialogueEditorApp");
@@ -25,51 +28,69 @@ FDDialogueEditor::~FDDialogueEditor()
 
 void FDDialogueEditor::Initialize()
 {
-	DocumentTracker = new FDocumentTracker();
-	TSharedPtr<FDDialogueEditor> ThisPtr(SharedThis(this));
-	DocumentTracker->Initialize(ThisPtr);
-	TSharedRef<FDocumentTabFactory> GraphEditorFactory = MakeShareable(new FDDialogueGraphEditorSummoner(ThisPtr,
-		FDDialogueGraphEditorSummoner::FOnCreateGraphEditorWidget::CreateSP(this, &FDDialogueEditor::CreateGraphEditorWidget)
-	));
-	DocumentTracker->RegisterDocumentFactory(GraphEditorFactory);	
+	if(DocumentTracker == nullptr)
+	{
+		DocumentTracker = new FDocumentTracker();
+		TSharedPtr<FDDialogueEditor> ThisPtr(SharedThis(this));
+		DocumentTracker->Initialize(ThisPtr);
+		TSharedRef<FDocumentTabFactory> GraphEditorFactory = MakeShareable(new FDDialogueGraphEditorSummoner(ThisPtr,
+			FDDialogueGraphEditorSummoner::FOnCreateGraphEditorWidget::CreateSP(this, &FDDialogueEditor::CreateGraphEditorWidget)
+		));
+		DocumentTracker->RegisterDocumentFactory(GraphEditorFactory);	
+	}
 }
 
 void FDDialogueEditor::OpenDialogueEditor(const TArray<UObject*>& InObjects,
                                           const TSharedPtr<IToolkitHost>& EditWithinLevelEditor)
 {
-	DataAsset = Cast<UDDDialogueDataAsset>(InObjects[0]);
+	DialogueData = Cast<UDDDialogueData>(InObjects[0]);
 
-	if (!IsValid(DataAsset))
+	if (!IsValid(DialogueData))
 	{
 		UE_LOG(DDDialogue, Warning, TEXT("FDDialogueEditor::OpenDialogueEditor Graph Object is Null.."));
 		return;
 	}
-	
-	const TSharedRef<FTabManager::FLayout> DummyLayout = FTabManager::NewLayout("NullLayout")->AddArea(
-		FTabManager::NewPrimaryArea());
 
 	TArray<UObject*> ObjectsToEdit;
-	ObjectsToEdit.Add(DataAsset);
+	ObjectsToEdit.Add(DialogueData);
 
+	const bool bNewGraph = DialogueData->TestGraph == nullptr;
+	if(bNewGraph)
+	{
+		UEdGraph* pNewGraph = FBlueprintEditorUtils::CreateNewGraph(DialogueData, TEXT("Test111"), UDDDialogueGraph::StaticClass(), UDDDialogueGraphSchema::StaticClass());
+		const UEdGraphSchema* Schema = pNewGraph->GetSchema();
+		Schema->CreateDefaultNodesForGraph(*pNewGraph);
+		DialogueData->TestGraph = pNewGraph;
+	}
+	
+	TSharedRef<FTabPayload_UObject> Payload = FTabPayload_UObject::Make(DialogueData->TestGraph);
+
+	if(DocumentTracker != nullptr)
+	{
+		TSharedPtr<SDockTab> DocumentTab = DocumentTracker->OpenDocument(Payload, bNewGraph ? FDocumentTracker::OpenNewDocument : FDocumentTracker::RestorePreviousDocument);
+	}
+		
+	/*const TSharedRef<FTabManager::FLayout> DummyLayout = FTabManager::NewLayout("NullLayout")->AddArea(
+		FTabManager::NewPrimaryArea());
 	constexpr bool bCreateDefaultStandaloneMenu = true;
 	constexpr bool bCreateDefaultToolbar = true;
 	InitAssetEditor(EToolkitMode::Standalone, EditWithinLevelEditor, AppIdentifier, DummyLayout,
 	                bCreateDefaultStandaloneMenu,
-	                bCreateDefaultToolbar, ObjectsToEdit);
+	                bCreateDefaultToolbar, ObjectsToEdit);*/
 }
 
 //-------------------------------------------------------------------------------------
 
-class UDDDialogueDataAsset* FDDialogueEditor::GetDialogueGraphObj() const
+class UDDDialogueData* FDDialogueEditor::GetDialogueGraphObj() const
 {
-	return GetEditingObjects().Num() == 1 ? Cast<UDDDialogueDataAsset>(GetEditingObjects()[0]) : nullptr;
+	return GetEditingObjects().Num() == 1 ? Cast<UDDDialogueData>(GetEditingObjects()[0]) : nullptr;
 }
 
 //-------------------------------------------------------------------------------------
 
 const FSlateBrush* FDDialogueEditor::GetDefaultTabIcon() const
 {
-	return FDDialogueEditorStyle::Get().GetBrush(StyleNamespace::Icon);
+	return FDDialogueEditorStyle::Get().GetBrush(StyleNamespace::Icon16);
 }
 
 void FDDialogueEditor::OnSelectedNodesChanged(const FGraphPanelSelectionSet& _SelectionSet)

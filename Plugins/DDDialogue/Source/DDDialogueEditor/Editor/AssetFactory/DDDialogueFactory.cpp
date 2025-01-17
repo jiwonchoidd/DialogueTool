@@ -1,12 +1,13 @@
 ﻿#include "DDDialogueFactory.h"
 
-#include "DDDialogue/Dialogue/DDDialogueDataAsset.h"
+#include "DDDialogue/Dialogue/DDDialogueData.h"
+#include "DDDialogueEditor/Editor/FDDialogueEditorStyle.h"
 
 #define LOCTEXT_NAMESPACE "UDDDialogueFactory"
 
 UDDDialogueFactory::UDDDialogueFactory()
 {
-	SupportedClass = UDDDialogueDataAsset::StaticClass();
+	SupportedClass = UDDDialogueData::StaticClass();
 	bCreateNew = true;
 	bEditAfterNew = true;
 }
@@ -14,7 +15,7 @@ UDDDialogueFactory::UDDDialogueFactory()
 UObject* UDDDialogueFactory::FactoryCreateNew(UClass* Class, UObject* InParent, FName Name, EObjectFlags Flags,
 	UObject* Context, FFeedbackContext* Warn)
 {
-	return NewObject<UDDDialogueDataAsset>(InParent, Class, Name, Flags);
+	return NewObject<UDDDialogueData>(InParent, Class, Name, Flags);
 }
 
 FText UDDDialogueFactory::GetDisplayName() const

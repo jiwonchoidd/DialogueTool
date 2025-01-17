@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "DDDialogueDataAsset.generated.h"
+#include "DDDialogueData.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DDDIALOGUE_API UDDDialogueDataAsset : public UDataAsset
+class DDDIALOGUE_API UDDDialogueData : public UObject
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(EditAnywhere, Category = "TestValue")
-	TArray<UDDDialogueDataAsset*> Children;
-	
+	class UEdGraph*	TestGraph;
 };

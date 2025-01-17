@@ -2,7 +2,10 @@
 
 namespace StyleNamespace
 {
-	const FName Icon = FName("DDDialogue.Icon");
+	const FName Icon16 = FName("DDDialogue16.Icon");
+	const FName Icon64 = FName("DDDialogue64.Icon");
+	// FSlateIconFinder::FindCustomIconForClass
+	const FName MenuThumbnail = FName("ClassThumbnail.DDDialogueData");
 }
 
 class FDDialogueEditorStyle : public FSlateStyleSet
