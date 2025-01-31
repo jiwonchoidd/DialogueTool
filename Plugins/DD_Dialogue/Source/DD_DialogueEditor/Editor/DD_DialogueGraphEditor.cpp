@@ -1,7 +1,7 @@
 ﻿#include "DD_DialogueGraphEditor.h"
 
-#include "DD_Define.h"
 #include "DD_DialogueEditorStyle.h"
+#include "GraphEditorActions.h"
 #include "DD_Dialogue/DD_Dialogue.h"
 #include "DD_Dialogue/Dialogue/DD_DialogueData.h"
 #include "DD_Dialogue/Dialogue/Graph/DD_DialogueGraph.h"
@@ -26,14 +26,14 @@ FDD_DialogueGraphEditor::~FDD_DialogueGraphEditor()
 	DetailsView.Reset();
 }
 
-void FDD_DialogueGraphEditor::InitDialogueEditor(EToolkitMode::Type Mode,
-	const TSharedPtr<IToolkitHost>& InitToolkitHost, class UDD_DialogueData* _pDialogueData)
+void FDD_DialogueGraphEditor::InitDialogueEditor(EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost>& InitToolkitHost, class UDD_DialogueData* _pDialogueData)
 {
 	DialogueData = _pDialogueData;
 
+	
 	CommonInitialization();
 
-	TSharedRef<FTabManager::FLayout> StandaloneDefaultLayout = FTabManager::NewLayout("Standalone_SoundClassEditor_Layout_v3")
+	TSharedRef<FTabManager::FLayout> StandaloneDefaultLayout = FTabManager::NewLayout("Standalone_DialogueEditor_Layout_v3")
 		->AddArea
 		(
 			FTabManager::NewPrimaryArea()->SetOrientation(Orient_Vertical)
@@ -61,93 +61,10 @@ void FDD_DialogueGraphEditor::InitDialogueEditor(EToolkitMode::Type Mode,
 	TArray<UObject*> ObjectsToEdit;
 	ObjectsToEdit.Add(DialogueData);
 	InitAssetEditor(EToolkitMode::Standalone, InitToolkitHost, AppIdentifier, StandaloneDefaultLayout,
-					bCreateDefaultStandaloneMenu,
-					bCreateDefaultToolbar, ObjectsToEdit);
+	                bCreateDefaultStandaloneMenu,
+	                bCreateDefaultToolbar, ObjectsToEdit);
 
 	RegenerateMenusAndToolbars();
-
-	if (DetailsView.IsValid())
-	{
-		//DetailsView->SetIsPropertyEditingEnabledDelegate(FIsPropertyEditingEnabled::CreateSP(this, &FSimpleAssetEditor::IsPropertyEditingEnabled));
-		DetailsView->SetObjects(ObjectsToEdit);
-	}
-}
-
-//-------------------------------------------------------------------------------------
-
-TSharedRef<SWidget> FDD_DialogueGraphEditor::SpawnEditor() const
-{
-	return
-			SNew(SVerticalBox)
-			+ SVerticalBox::Slot()
-			.FillHeight(1.0f)
-			.HAlign(HAlign_Fill)
-			[
-				DetailsView.ToSharedRef()
-			]
-			+ SVerticalBox::Slot()
-			.AutoHeight()
-			.HAlign(HAlign_Left)
-			.VAlign(VAlign_Top)
-			[
-				SNew(SVerticalBox)
-				+ SVerticalBox::Slot()
-				.HAlign(HAlign_Fill)
-				.Padding(0.0f, 5.0f)
-				[
-					SNew(SBorder)
-					.BorderBackgroundColor(DialogueEditorColors::NodeBody::InjectedSubNode)
-					.BorderImage(FAppStyle::GetBrush("Graph.StateNode.Body"))
-					.Visibility(EVisibility::Visible)
-					.Padding(FMargin(5.0f))
-					[
-						SNew(STextBlock)
-						.Text(LOCTEXT("InjectedNode", "Node is injected by subtree and can't be edited"))
-					]
-				]
-				+ SVerticalBox::Slot()
-				.HAlign(HAlign_Fill)
-				.Padding(0.0f, 5.0f)
-				[
-					SNew(SBorder)
-					.BorderBackgroundColor(DialogueEditorColors::NodeBody::InjectedSubNode)
-					.BorderImage(FAppStyle::GetBrush("Graph.StateNode.Body"))
-					.Visibility(EVisibility::Visible)
-					.Padding(FMargin(5.0f))
-					[
-						SNew(STextBlock)
-						.Text(FText::FromString(TEXT("Root")))
-					]
-				]
-				+ SVerticalBox::Slot()
-				.HAlign(HAlign_Fill)
-				.Padding(0.0f, 5.0f)
-				[
-					SNew(SBorder)
-					.BorderBackgroundColor(DialogueEditorColors::NodeBorder::HighlightAbortRange0)
-					.BorderImage(FAppStyle::GetBrush("Graph.StateNode.Body"))
-					.Visibility(EVisibility::Visible)
-					.Padding(FMargin(5.0f))
-					[
-						SNew(STextBlock)
-						.Text(FText::Format(LOCTEXT("AbortModeHighlight", "Nodes aborted by mode: {0}"), LOCTEXT("AbortPriorityLower", "Lower Priority")))
-					]
-				]
-				+ SVerticalBox::Slot()
-				.HAlign(HAlign_Fill)
-				.Padding(0.0f, 5.0f)
-				[
-					SNew(SBorder)
-					.BorderBackgroundColor(DialogueEditorColors::NodeBorder::HighlightAbortRange1)
-					.BorderImage(FAppStyle::GetBrush("Graph.StateNode.Body"))
-					.Visibility(EVisibility::Visible)
-					.Padding(FMargin(5.0f))
-					[
-						SNew(STextBlock)
-						.Text(FText::Format(LOCTEXT("AbortModeHighlight", "Nodes aborted by mode: {0}"), LOCTEXT("AbortPrioritySelf", "Self")))
-					]
-				]
-			];
 }
 
 //-------------------------------------------------------------------------------------
@@ -166,27 +83,32 @@ const FSlateBrush* FDD_DialogueGraphEditor::GetDefaultTabIcon() const
 
 void FDD_DialogueGraphEditor::OnSelectedNodesChanged(const FGraphPanelSelectionSet& _SelectionSet)
 {
+	UE_LOG(DD_Dialogue, Log, TEXT("OnSelectedNodesChanged"))
 }
 
 void FDD_DialogueGraphEditor::OnNodeDoubleClicked(class UEdGraphNode* _GraphNode)
 {
+	UE_LOG(DD_Dialogue, Log, TEXT("OnNodeDoubleClicked"))
 }
 
-void FDD_DialogueGraphEditor::OnNodeTitleCommitted(const FText& _Text, ETextCommit::Type _Type, UEdGraphNode* _GraphNode)
+void FDD_DialogueGraphEditor::OnNodeTitleCommitted(const FText& _Text, ETextCommit::Type _Type,
+                                                   UEdGraphNode* _GraphNode)
 {
+	UE_LOG(DD_Dialogue, Log, TEXT("OnNodeTitleCommitted"))
 }
 
 //-------------------------------------------------------------------------------------
 
 TSharedRef<SGraphEditor> FDD_DialogueGraphEditor::CreateGraphEditorWidget(UEdGraph* InGraph)
 {
-    check(InGraph != NULL);
-    
+	check(InGraph != NULL);
+
 	SGraphEditor::FGraphEditorEvents InEvents;
 	InEvents.OnSelectionChanged = SGraphEditor::FOnSelectionChanged::CreateSP(
 		this, &FDD_DialogueGraphEditor::OnSelectedNodesChanged);
 	InEvents.OnNodeDoubleClicked = FSingleNodeEvent::CreateSP(this, &FDD_DialogueGraphEditor::OnNodeDoubleClicked);
 	InEvents.OnTextCommitted = FOnNodeTextCommitted::CreateSP(this, &FDD_DialogueGraphEditor::OnNodeTitleCommitted);
+	//InEvents.OnCreateActionMenu = SGraphEditor::FOnCreateActionMenu::CreateSP(this, &FBlueprintEditor::OnCreateGraphActionMenu);
 
 	TSharedRef<SWidget> TitleBarWidget =
 		SNew(SBorder)
@@ -199,24 +121,27 @@ TSharedRef<SGraphEditor> FDD_DialogueGraphEditor::CreateGraphEditorWidget(UEdGra
 			.FillWidth(1.f)
 			[
 				SNew(STextBlock)
-				.Text(LOCTEXT("TitleBar", "TEST Title"))
+				.Text(LOCTEXT("TitleBar", "Dialogue Graph"))
 				.TextStyle(FAppStyle::Get(), TEXT("GraphBreadcrumbButtonText"))
 			]
 		];
 
 	const bool bGraphIsEditable = InGraph->bEditable;
 	return SNew(SGraphEditor)
-				//.AdditionalCommands(GraphEditorCommands)
-	                         .IsEditable(this, &FDD_DialogueGraphEditor::InEditingMode, bGraphIsEditable)
-	                         .Appearance(this, &FDD_DialogueGraphEditor::GetGraphAppearance)
-	                         .TitleBar(TitleBarWidget)
-	                         .GraphToEdit(InGraph)
-	                         .GraphEvents(InEvents);
+				.AdditionalCommands(GraphEditorCommands)
+	            .IsEditable(this, &FDD_DialogueGraphEditor::InEditingMode, bGraphIsEditable)
+	            .Appearance(this, &FDD_DialogueGraphEditor::GetGraphAppearance)
+	            .TitleBar(TitleBarWidget)
+	            .GraphToEdit(InGraph)
+	            .GraphEvents(InEvents)
+				.AutoExpandActionMenu(true)
+				.ShowGraphStateOverlay(false);
 }
 
 void FDD_DialogueGraphEditor::RegisterTabSpawners(const TSharedRef<FTabManager>& _TabManager)
 {
-	WorkspaceMenuCategory = _TabManager->AddLocalWorkspaceMenuCategory(LOCTEXT("WorkspaceMenu_GenericAssetEditor", "Asset Editor"));
+	WorkspaceMenuCategory = _TabManager->AddLocalWorkspaceMenuCategory(
+		LOCTEXT("WorkspaceMenu_GenericAssetEditor", "Asset Editor"));
 	FWorkflowCentricApplication::RegisterTabSpawners(_TabManager);
 
 	_TabManager->RegisterTabSpawner(GraphTabId, FOnSpawnTab::CreateSP(this, &FDD_DialogueGraphEditor::SpawnGraphTab))
@@ -224,7 +149,8 @@ void FDD_DialogueGraphEditor::RegisterTabSpawners(const TSharedRef<FTabManager>&
 	           .SetGroup(WorkspaceMenuCategory.ToSharedRef())
 	           .SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "GraphEditor.EventGraph_16x"));
 
-	_TabManager->RegisterTabSpawner(PropertiesTabId, FOnSpawnTab::CreateSP(this, &FDD_DialogueGraphEditor::SpawnPropertiesTab))
+	_TabManager->RegisterTabSpawner(PropertiesTabId,
+	                                FOnSpawnTab::CreateSP(this, &FDD_DialogueGraphEditor::SpawnPropertiesTab))
 	           .SetDisplayName(LOCTEXT("PropertiesTab", "Details"))
 	           .SetGroup(WorkspaceMenuCategory.ToSharedRef())
 	           .SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "Dialogue.Tabs.Details"))
@@ -244,8 +170,9 @@ FGraphAppearanceInfo FDD_DialogueGraphEditor::GetGraphAppearance() const
 {
 	// Temp Appearance..
 	FGraphAppearanceInfo AppearanceInfo;
-	AppearanceInfo.CornerText = LOCTEXT("EditorUtilityAppearanceCornerText", "EDITOR UTILITY");
-	AppearanceInfo.InstructionText = LOCTEXT("AppearanceInstructionText_DefaultGraph", "Drag Off Pins to Create/Connect New Nodes.");
+	AppearanceInfo.CornerText = LOCTEXT("EditorUtilityAppearanceCornerText", "Dialogue Editor");
+	AppearanceInfo.InstructionText = LOCTEXT("AppearanceInstructionText_DefaultGraph",
+	                                         "Drag Off Pins to Create/Connect New Nodes.");
 	return AppearanceInfo;
 }
 
@@ -257,15 +184,61 @@ bool FDD_DialogueGraphEditor::InEditingMode(bool bGraphIsEditable) const
 
 void FDD_DialogueGraphEditor::CommonInitialization()
 {
+	// Graph
 	const bool bNewGraph = DialogueData->Graph == nullptr;
 	if (bNewGraph)
 	{
-		UEdGraph* pNewGraph = FBlueprintEditorUtils::CreateNewGraph(DialogueData, NAME_None, UDD_DialogueGraph::StaticClass(), UDD_DialogueGraphSchema::StaticClass());
+		UEdGraph* pNewGraph = FBlueprintEditorUtils::CreateNewGraph(DialogueData, NAME_None,
+		                                                            UDD_DialogueGraph::StaticClass(),
+		                                                            UDD_DialogueGraphSchema::StaticClass());
 		const UEdGraphSchema* Schema = pNewGraph->GetSchema();
 		Schema->CreateDefaultNodesForGraph(*pNewGraph);
 		DialogueData->Graph = Cast<UDD_DialogueGraph>(pNewGraph);
 	}
 
+	// CommandList
+	FGraphEditorCommands::Register();
+	//FDialogueGraphEditorCommands::Register();
+
+	/*const FSoundCueGraphEditorCommands& Commands = FSoundCueGraphEditorCommands::Get();
+	ToolkitCommands->MapAction(
+		Commands.PlayCue,
+		FExecuteAction::CreateSP(this, &FSoundCueEditor::PlayCue));
+
+	ToolkitCommands->MapAction(
+		Commands.PlayNode,
+		FExecuteAction::CreateSP(this, &FSoundCueEditor::PlayNode),
+		FCanExecuteAction::CreateSP( this, &FSoundCueEditor::CanPlayNode ));
+
+	ToolkitCommands->MapAction(
+		Commands.StopCueNode,
+		FExecuteAction::CreateSP(this, &FSoundCueEditor::Stop));
+
+	ToolkitCommands->MapAction(
+		Commands.TogglePlayback,
+		FExecuteAction::CreateSP(this, &FSoundCueEditor::TogglePlayback));
+
+	ToolkitCommands->MapAction(
+		FGenericCommands::Get().Undo,
+		FExecuteAction::CreateSP( this, &FSoundCueEditor::UndoGraphAction ));
+
+	ToolkitCommands->MapAction(
+		FGenericCommands::Get().Redo,
+		FExecuteAction::CreateSP( this, &FSoundCueEditor::RedoGraphAction ));
+
+	ToolkitCommands->MapAction(
+		Commands.ToggleSolo,
+		FExecuteAction::CreateSP(this, &FSoundCueEditor::ToggleSolo),
+		FCanExecuteAction::CreateSP(this, &FSoundCueEditor::CanExcuteToggleSolo),
+		FIsActionChecked::CreateSP(this, &FSoundCueEditor::IsSoloToggled));
+		
+	ToolkitCommands->MapAction(
+		Commands.ToggleMute,
+		FExecuteAction::CreateSP(this, &FSoundCueEditor::ToggleMute),
+		FCanExecuteAction::CreateSP(this, &FSoundCueEditor::CanExcuteToggleMute),
+		FIsActionChecked::CreateSP(this, &FSoundCueEditor::IsMuteToggled));*/
+	
+	// Tab Widget
 	if (!GraphEditor.IsValid())
 	{
 		GraphEditor = CreateGraphEditorWidget(DialogueData->Graph);
@@ -273,36 +246,27 @@ void FDD_DialogueGraphEditor::CommonInitialization()
 
 	if (!DetailsView.IsValid())
 	{
-		FPropertyEditorModule& PropertyEditorModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
+		FPropertyEditorModule& PropertyEditorModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>(
+			"PropertyEditor");
 		FDetailsViewArgs DetailsViewArgs;
 		DetailsViewArgs.NameAreaSettings = FDetailsViewArgs::HideNameArea;
+		DetailsViewArgs.NotifyHook = this;
 		DetailsView = PropertyEditorModule.CreateDetailView(DetailsViewArgs);
+		DetailsView->SetObjects(TArray<UObject*>{DialogueData});
 	}
-}
-
-void FDD_DialogueGraphEditor::OpenInternalWidget()
-{
-	FPropertyEditorModule& PropertyEditorModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
-	FDetailsViewArgs DetailsViewArgs;
-	DetailsViewArgs.NameAreaSettings = FDetailsViewArgs::HideNameArea;
-	DetailsViewArgs.NotifyHook = this;
-	DetailsViewArgs.DefaultsOnlyVisibility = EEditDefaultsOnlyNodeVisibility::Hide;
-
-	//DetailsView = PropertyEditorModule.CreateDetailView( DetailsViewArgs );
-	//DetailsView->SetObject( nullptr );
-	//DetailsView->SetIsPropertyEditingEnabledDelegate(FIsPropertyEditingEnabled::CreateSP(this, &FConversationEditor::IsPropertyEditable));
-	//DetailsView->OnFinishedChangingProperties().AddSP(this, &FConversationEditor::OnFinishedChangingProperties);
 }
 
 TSharedRef<SDockTab> FDD_DialogueGraphEditor::SpawnGraphTab(const FSpawnTabArgs& _Args) const
 {
-	check( _Args.GetTabId() == GraphTabId );
+	check(_Args.GetTabId() == GraphTabId);
 
 	TSharedRef<SDockTab> SpawnedTab = SNew(SDockTab)
-		.Label(LOCTEXT("GraphCanvasTitle", "Graph"))
-		[
-			GraphEditor.ToSharedRef()
-		];
+		.Label(LOCTEXT("SoundCueGraphCanvasTitle", "Viewport"));
+
+	if (GraphEditor.IsValid())
+	{
+		SpawnedTab->SetContent(GraphEditor.ToSharedRef());
+	}
 
 	return SpawnedTab;
 }

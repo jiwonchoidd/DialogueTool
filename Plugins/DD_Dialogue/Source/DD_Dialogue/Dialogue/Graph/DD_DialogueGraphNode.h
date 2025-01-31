@@ -10,11 +10,18 @@
  * 
  */
 UCLASS()
-class DD_DIALOGUE_API UDD_DialogueGraphNode : public UEdGraphNode
+class DD_DIALOGUE_API UDD_DialogueGraphNode_Base : public UEdGraphNode
 {
 	GENERATED_BODY()
 	
 public:
+	// UEdGraphNode interface.
 	virtual void AllocateDefaultPins() override;
-	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
+	virtual void ReconstructNode() override;
+	virtual void AutowireNewNode(UEdGraphPin* FromPin) override;
+	virtual bool CanCreateUnderSpecifiedSchema(const UEdGraphSchema* Schema) const override;
+	virtual FString GetDocumentationLink() const override;
+	// End of UEdGraphNode interface.
 };
+
+//----------------------------------------------------------------------------------------

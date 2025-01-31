@@ -12,4 +12,5 @@ UCLASS()
 class DD_DIALOGUE_API UDD_DialogueGraph : public UEdGraph
 {
 	GENERATED_BODY()
+	class UDD_DialogueData* GetDialogueData() const;
 };
