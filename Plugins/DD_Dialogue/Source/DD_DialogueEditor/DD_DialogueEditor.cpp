@@ -1,8 +1,14 @@
 ﻿#include "DD_DialogueEditor.h"
 
 #include "AssetToolsModule.h"
-#include "Editor/AssetFactory/DD_DialogueEditorStyle.h"
-#include "Editor/AssetFactory/DD_Dialogue_AssetTypeActions.h"
+#include "Editor/DD_Define.h"
+#include "Editor/DD_DialogueEditorStyle.h"
+#include "Editor/DD_Dialogue_AssetTypeActions.h"
+
+// Tab identifiers
+const FName FDialogueEditorTabs::GraphDetailsID(TEXT("FDialogueEditorTabs_GraphDetails"));
+const FName FDialogueEditorTabs::GraphEditorID(TEXT("FDialogueEditorTabs_GraphEditor"));
+const FName FDialogueApplicationModes::StandardMode(TEXT("FDialogueEditorStandard_Mode"));
 
 TArray<TSharedPtr<FDD_Dialogue_AssetTypeActions>> AssetAction;
 

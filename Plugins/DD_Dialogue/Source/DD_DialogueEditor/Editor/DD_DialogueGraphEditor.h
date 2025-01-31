@@ -5,15 +5,20 @@
 /**
  * 
  */
-class FDD_DialogueGraphEditor : public FWorkflowCentricApplication, public FNotifyHook
+
+class FDocumentTracker;
+
+class DD_DIALOGUEEDITOR_API FDD_DialogueGraphEditor : public FWorkflowCentricApplication, public FNotifyHook
 {
 public:
 	FDD_DialogueGraphEditor();
 	virtual ~FDD_DialogueGraphEditor() override;
 public:
-	void OpenDialogueEditor(const TArray<UObject*>& InObjects, const TSharedPtr<IToolkitHost>& EditWithinLevelEditor);
+	void InitDialogueEditor(const TArray<UObject*>& InObjects, const TSharedPtr<IToolkitHost>& EditWithinLevelEditor);
 public:
-	class UDD_DialogueData* GetDialogueGraphObj() const;
+	TSharedRef<SWidget> SpawnEditor() const;
+public:
+	class UDD_DialogueData*		  GetGraphData() const;
 private:
 	virtual FName GetToolkitFName() const override { return FName("DD_DialogueEditor"); }
 	virtual FText GetBaseToolkitName() const override { return FText::FromString("DD Dialogue Editor"); }
@@ -21,6 +26,7 @@ private:
 	virtual FString GetWorldCentricTabPrefix() const override { return TEXT("DD_DialogueEditor"); }
 	virtual const FSlateBrush* GetDefaultTabIcon() const override;
 	virtual void RegisterTabSpawners(const TSharedRef<FTabManager>& _TabManager) override;
+	virtual void UnregisterTabSpawners(const TSharedRef<FTabManager>& _TabManager) override;
 private:
 	/** Input Events */
 	void OnSelectedNodesChanged(const FGraphPanelSelectionSet& _SelectionSet);
@@ -32,12 +38,16 @@ private:
 private:
 	FGraphAppearanceInfo GetGraphAppearance() const;
 	bool InEditingMode(bool bGraphIsEditable) const;
-
+	
 private:
-	void OpenDocument() const;
+	void CommonInitialization();
+	void OpenInternalWidget();
+private:
+	TSharedRef<SDockTab> SpawnPropertiesTab( const FSpawnTabArgs& _Args) const;
+	TSharedRef<SDockTab> SpawnGraphTab( const FSpawnTabArgs& _Args) const;
 private:
 	class UDD_DialogueData*		DialogueData = nullptr;
 	
-	TSharedPtr<class FDocumentTracker>	DocumentManager;
-	TWeakPtr<class FDocumentTabFactory> GraphEditorTabFactoryPtr;
+	TSharedPtr< class IDetailsView > DetailsView;
+	TSharedPtr<class SGraphEditor>   GraphEditor;
 };

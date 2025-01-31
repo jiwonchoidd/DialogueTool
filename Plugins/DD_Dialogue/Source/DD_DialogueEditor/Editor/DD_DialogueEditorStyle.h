@@ -8,7 +8,7 @@ namespace StyleNamespace
 	const FName MenuThumbnail = FName("ClassThumbnail.DD_DialogueData");
 }
 
-class FDD_DialogueEditorStyle : public FSlateStyleSet
+class DD_DIALOGUEEDITOR_API FDD_DialogueEditorStyle : public FSlateStyleSet
 {
 public:
 	FDD_DialogueEditorStyle();

@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "AssetTypeActions_Base.h"
 
-class FDD_Dialogue_AssetTypeActions : public FAssetTypeActions_Base
+class DD_DIALOGUEEDITOR_API FDD_Dialogue_AssetTypeActions : public FAssetTypeActions_Base
 {
 public:
 	virtual uint32 GetCategories() override;

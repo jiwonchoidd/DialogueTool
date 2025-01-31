@@ -18,7 +18,10 @@ public:
 	UDD_DialogueData();
 public:
 	UPROPERTY(EditAnywhere, Category = "TestValue")
-	class UEdGraph*	TestGraph;
-
-private:
+	TObjectPtr<class UDD_DialogueGraph>	Graph;
+	
+#if WITH_EDITORONLY_DATA
+	UPROPERTY()
+	TArray<FEditedDocumentInfo> LastEditedDocuments;
+#endif
 };

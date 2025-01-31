@@ -3,6 +3,6 @@
 
 #include "DD_DialogueData.h"
 
-UDD_DialogueData::UDD_DialogueData(): TestGraph(nullptr)
+UDD_DialogueData::UDD_DialogueData(): Graph(nullptr)
 {
 }

@@ -47,7 +47,7 @@ void FDD_Dialogue_AssetTypeActions::OpenAssetEditor(const TArray<UObject*>& InOb
 	TSharedPtr<IToolkitHost> EditWithinLevelEditor)
 {
 	TSharedRef<FDD_DialogueGraphEditor> DialogueEditor = MakeShared<FDD_DialogueGraphEditor>();
-	DialogueEditor->OpenDialogueEditor(InObjects, EditWithinLevelEditor);
+	DialogueEditor->InitDialogueEditor(InObjects, EditWithinLevelEditor);
 }
 
 #undef LOCTEXT_NAMESPACE
