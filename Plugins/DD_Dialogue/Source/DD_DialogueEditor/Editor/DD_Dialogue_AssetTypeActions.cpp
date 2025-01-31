@@ -1,6 +1,7 @@
 ﻿#include "DD_Dialogue_AssetTypeActions.h"
 
 #include "DD_DialogueEditorStyle.h"
+#include "DD_Dialogue/DD_Dialogue.h"
 #include "DD_Dialogue/Dialogue/DD_DialogueData.h"
 #include "DD_DialogueEditor/Editor/DD_DialogueGraphEditor.h"
 
@@ -47,7 +48,17 @@ void FDD_Dialogue_AssetTypeActions::OpenAssetEditor(const TArray<UObject*>& InOb
 	TSharedPtr<IToolkitHost> EditWithinLevelEditor)
 {
 	TSharedRef<FDD_DialogueGraphEditor> DialogueEditor = MakeShared<FDD_DialogueGraphEditor>();
-	DialogueEditor->InitDialogueEditor(InObjects, EditWithinLevelEditor);
+
+	for(UObject* Object : InObjects)
+	{
+		if(UDD_DialogueData* DialogueData = Cast<UDD_DialogueData>(Object))
+		{
+			const EToolkitMode::Type Mode = EditWithinLevelEditor.IsValid() ? EToolkitMode::WorldCentric : EToolkitMode::Standalone;
+			DialogueEditor->InitDialogueEditor(Mode, EditWithinLevelEditor, DialogueData);
+			return;
+		}
+	}
+	UE_LOG(DD_Dialogue, Error, TEXT("FDD_Dialogue_AssetTypeActions::OpenAssetEditor Object Null"))
 }
 
 #undef LOCTEXT_NAMESPACE

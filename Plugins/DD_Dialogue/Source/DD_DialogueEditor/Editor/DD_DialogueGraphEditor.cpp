@@ -26,18 +26,10 @@ FDD_DialogueGraphEditor::~FDD_DialogueGraphEditor()
 	DetailsView.Reset();
 }
 
-//-------------------------------------------------------------------------------------
-
-void FDD_DialogueGraphEditor::InitDialogueEditor(const TArray<UObject*>& InObjects,
-                                                 const TSharedPtr<IToolkitHost>& EditWithinLevelEditor)
+void FDD_DialogueGraphEditor::InitDialogueEditor(EToolkitMode::Type Mode,
+	const TSharedPtr<IToolkitHost>& InitToolkitHost, class UDD_DialogueData* _pDialogueData)
 {
-	DialogueData = CastChecked<UDD_DialogueData>(InObjects[0]);
-
-	if (!IsValid(DialogueData))
-	{
-		UE_LOG(DD_Dialogue, Warning, TEXT("DialogueEditor::OpenDialogueEditor Graph Object is Null.."));
-		return;
-	}
+	DialogueData = _pDialogueData;
 
 	CommonInitialization();
 
@@ -68,9 +60,9 @@ void FDD_DialogueGraphEditor::InitDialogueEditor(const TArray<UObject*>& InObjec
 
 	TArray<UObject*> ObjectsToEdit;
 	ObjectsToEdit.Add(DialogueData);
-	InitAssetEditor(EToolkitMode::Standalone, EditWithinLevelEditor, AppIdentifier, StandaloneDefaultLayout,
-	                bCreateDefaultStandaloneMenu,
-	                bCreateDefaultToolbar, ObjectsToEdit);
+	InitAssetEditor(EToolkitMode::Standalone, InitToolkitHost, AppIdentifier, StandaloneDefaultLayout,
+					bCreateDefaultStandaloneMenu,
+					bCreateDefaultToolbar, ObjectsToEdit);
 
 	RegenerateMenusAndToolbars();
 
@@ -80,6 +72,8 @@ void FDD_DialogueGraphEditor::InitDialogueEditor(const TArray<UObject*>& InObjec
 		DetailsView->SetObjects(ObjectsToEdit);
 	}
 }
+
+//-------------------------------------------------------------------------------------
 
 TSharedRef<SWidget> FDD_DialogueGraphEditor::SpawnEditor() const
 {
@@ -186,6 +180,8 @@ void FDD_DialogueGraphEditor::OnNodeTitleCommitted(const FText& _Text, ETextComm
 
 TSharedRef<SGraphEditor> FDD_DialogueGraphEditor::CreateGraphEditorWidget(UEdGraph* InGraph)
 {
+    check(InGraph != NULL);
+    
 	SGraphEditor::FGraphEditorEvents InEvents;
 	InEvents.OnSelectionChanged = SGraphEditor::FOnSelectionChanged::CreateSP(
 		this, &FDD_DialogueGraphEditor::OnSelectedNodesChanged);

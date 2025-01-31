@@ -5,16 +5,13 @@
 /**
  * 
  */
-
-class FDocumentTracker;
-
-class DD_DIALOGUEEDITOR_API FDD_DialogueGraphEditor : public FWorkflowCentricApplication, public FNotifyHook
+class FDD_DialogueGraphEditor : public FWorkflowCentricApplication, public FNotifyHook
 {
 public:
 	FDD_DialogueGraphEditor();
 	virtual ~FDD_DialogueGraphEditor() override;
 public:
-	void InitDialogueEditor(const TArray<UObject*>& InObjects, const TSharedPtr<IToolkitHost>& EditWithinLevelEditor);
+	void InitDialogueEditor(EToolkitMode::Type Mode, const TSharedPtr< IToolkitHost >& InitToolkitHost, class UDD_DialogueData* _pDialogueData);
 public:
 	TSharedRef<SWidget> SpawnEditor() const;
 public:
