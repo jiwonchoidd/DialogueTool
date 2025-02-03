@@ -4,6 +4,7 @@
 #include "DD_DialogueGraphSchema.h"
 
 #include "DD_DialogueGraphNode.h"
+#include "Selection.h"
 
 #define LOCTEXT_NAMESPACE "DialogueGraphSchema"
 
@@ -21,15 +22,15 @@ void UDD_DialogueGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
 
 void UDD_DialogueGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const
 {
-	/*GetAllSoundNodeActions(ContextMenuBuilder, true);
+	GetAllDialogueActions(ContextMenuBuilder, true);
 
-	GetCommentAction(ContextMenuBuilder, ContextMenuBuilder.CurrentGraph);
-
-	if (!ContextMenuBuilder.FromPin && FSoundCueEditorUtilities::CanPasteNodes(ContextMenuBuilder.CurrentGraph))
-	{
-		TSharedPtr<FSoundCueGraphSchemaAction_Paste> NewAction( new FSoundCueGraphSchemaAction_Paste(FText::GetEmpty(), LOCTEXT("PasteHereAction", "Paste here"), FText::GetEmpty(), 0) );
-		ContextMenuBuilder.AddAction( NewAction );
-	}*/
+	// NOT IMPLEMENT YET..
+	//GetCommentAction(ContextMenuBuilder, ContextMenuBuilder.CurrentGraph);
+	//if (!ContextMenuBuilder.FromPin && FSoundCueEditorUtilities::CanPasteNodes(ContextMenuBuilder.CurrentGraph))
+	//{
+	//	TSharedPtr<FSoundCueGraphSchemaAction_Paste> NewAction( new FSoundCueGraphSchemaAction_Paste(FText::GetEmpty(), LOCTEXT("PasteHereAction", "Paste here"), FText::GetEmpty(), 0) );
+	//	ContextMenuBuilder.AddAction( NewAction );
+	//}
 }
 
 void UDD_DialogueGraphSchema::GetContextMenuActions(class UToolMenu* Menu,
@@ -140,6 +141,47 @@ int32 UDD_DialogueGraphSchema::GetNodeSelectionCount(const UEdGraph* Graph) cons
 TSharedPtr<FEdGraphSchemaAction> UDD_DialogueGraphSchema::GetCreateCommentAction() const
 {
 	return Super::GetCreateCommentAction();
+}
+
+void UDD_DialogueGraphSchema::GetAllDialogueActions(FGraphActionMenuBuilder& ActionMenuBuilder, bool bShowSelectedActions) const
+{
+	if (bShowSelectedActions)
+	{
+		FText SelectedItemText;
+
+		// Get display text for any items that may be selected
+		if (ActionMenuBuilder.FromPin == NULL)
+		{
+		
+		}
+		else
+		{
+			
+		}
+	}
+
+	TArray<UClass*> NodeClasses;
+	GetDerivedClasses(UDD_DialogueGraphNode_Base::StaticClass(), NodeClasses, true);
+	NodeClasses.Sort();
+	
+	for(TSubclassOf<UDD_DialogueGraphNode_Base> BaseNode : NodeClasses)
+	{		
+		if(BaseNode->HasAnyClassFlags(CLASS_Hidden))
+			continue;
+
+		if (!ActionMenuBuilder.FromPin || ActionMenuBuilder.FromPin->Direction == EGPD_Input)
+		{
+			{
+				const FText Name = FText::FromString(BaseNode->GetDescription());
+				FFormatNamedArguments Arguments;
+				Arguments.Add(TEXT("Name"), Name);
+				const FText AddToolTip = FText::Format(LOCTEXT("New Node", "Adds {Name} node here"), Arguments);
+				TSharedPtr<FEdGraphSchemaAction_NewNode> NewNodeAction(new FEdGraphSchemaAction_NewNode(LOCTEXT("DialogueNodeAction", "Dialogue Node"), Name, AddToolTip, 0));
+				ActionMenuBuilder.AddAction(NewNodeAction);
+				NewNodeAction->NodeTemplate = BaseNode->GetDefaultObject<UDD_DialogueGraphNode_Base>();
+			}
+		}
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

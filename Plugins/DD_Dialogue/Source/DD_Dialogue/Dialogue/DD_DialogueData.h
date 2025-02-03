@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DataAsset.h"
 #include "DD_DialogueData.generated.h"
 
 /**

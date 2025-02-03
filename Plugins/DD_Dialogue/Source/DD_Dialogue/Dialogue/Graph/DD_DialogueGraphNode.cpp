@@ -101,3 +101,10 @@ FString UDD_DialogueGraphNode_Base::GetDocumentationLink() const
 }
 
 //-----------------------------------------------------------------
+
+FText UDD_TalkGraphNode::GetPinDisplayName(const UEdGraphPin* Pin) const
+{
+	return Super::GetPinDisplayName(Pin);
+}
+
+//-----------------------------------------------------------------

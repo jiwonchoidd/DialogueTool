@@ -31,4 +31,7 @@ public:
 	virtual int32 GetNodeSelectionCount(const UEdGraph* Graph) const override;
 	virtual TSharedPtr<FEdGraphSchemaAction> GetCreateCommentAction() const override;
 	//~ End EdGraphSchema Interface
+
+private:
+	void GetAllDialogueActions(FGraphActionMenuBuilder& ActionMenuBuilder, bool bShowSelectedActions) const;
 };

@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Hidden)
 class DD_DIALOGUE_API UDD_DialogueGraphNode_Base : public UEdGraphNode
 {
 	GENERATED_BODY()
@@ -25,3 +25,13 @@ public:
 };
 
 //----------------------------------------------------------------------------------------
+
+UCLASS()
+class DD_DIALOGUE_API UDD_TalkGraphNode : public UDD_DialogueGraphNode_Base
+{
+	GENERATED_BODY()
+	
+public:
+	virtual FText GetPinDisplayName(const UEdGraphPin* Pin) const override;
+	
+};
