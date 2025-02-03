@@ -32,6 +32,7 @@ class DD_DIALOGUE_API UDD_TalkGraphNode : public UDD_DialogueGraphNode_Base
 	GENERATED_BODY()
 	
 public:
-	virtual FText GetPinDisplayName(const UEdGraphPin* Pin) const override;
-	
+	// UEdGraphNode interface.
+	virtual void AllocateDefaultPins() override;
+	// End of UEdGraphNode interface.
 };

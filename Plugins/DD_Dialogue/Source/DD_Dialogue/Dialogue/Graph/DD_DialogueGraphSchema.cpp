@@ -12,7 +12,6 @@ void UDD_DialogueGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
 {
 	const int32 RootNodeHeightOffset = -58;
 
-	// TODO : 임시
 	FGraphNodeCreator<UDD_DialogueGraphNode_Base> NodeCreator(Graph);
 	UDD_DialogueGraphNode_Base* ResultRootNode = NodeCreator.CreateNode();
 	ResultRootNode->NodePosY = RootNodeHeightOffset;
@@ -65,13 +64,8 @@ const FPinConnectionResponse UDD_DialogueGraphSchema::CanCreateConnection(const 
 		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, LOCTEXT("ConnectionIncompatible", "Directions are not compatible"));
 	}
 
-	/*if (ConnectionCausesLoop(InputPin, OutputPin))
-	{
-		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, LOCTEXT("ConnectionLoop", "Connection would cause loop"));
-	}*/
-
 	// Break existing connections on inputs only - multiple output connections are acceptable
-	if (InputPin->LinkedTo.Num() > 0)
+	if (OutputPin->LinkedTo.Num() > 0)
 	{
 		ECanCreateConnectionResponse ReplyBreakOutputs;
 		if (InputPin == A)
@@ -169,7 +163,7 @@ void UDD_DialogueGraphSchema::GetAllDialogueActions(FGraphActionMenuBuilder& Act
 		if(BaseNode->HasAnyClassFlags(CLASS_Hidden))
 			continue;
 
-		if (!ActionMenuBuilder.FromPin || ActionMenuBuilder.FromPin->Direction == EGPD_Input)
+		if (!ActionMenuBuilder.FromPin || ActionMenuBuilder.FromPin->Direction == EGPD_Output)
 		{
 			{
 				const FText Name = FText::FromString(BaseNode->GetDescription());

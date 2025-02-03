@@ -102,9 +102,12 @@ FString UDD_DialogueGraphNode_Base::GetDocumentationLink() const
 
 //-----------------------------------------------------------------
 
-FText UDD_TalkGraphNode::GetPinDisplayName(const UEdGraphPin* Pin) const
+void UDD_TalkGraphNode::AllocateDefaultPins()
 {
-	return Super::GetPinDisplayName(Pin);
+	check(Pins.Num() == 0);
+
+	CreatePin(EGPD_Input, TEXT("DialogueNode"), TEXT("Input"));
+	CreatePin(EGPD_Output, TEXT("DialogueNode"), TEXT("Output"));
 }
 
 //-----------------------------------------------------------------
