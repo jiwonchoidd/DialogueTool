@@ -3,8 +3,7 @@
 
 #include "DD_DialogueGraphSchema.h"
 
-#include "DD_DialogueGraphNode.h"
-#include "Selection.h"
+#include "Node/DD_DialogueBaseNode.h"
 
 #define LOCTEXT_NAMESPACE "DialogueGraphSchema"
 
@@ -12,8 +11,8 @@ void UDD_DialogueGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
 {
 	const int32 RootNodeHeightOffset = -58;
 
-	FGraphNodeCreator<UDD_DialogueGraphNode_Base> NodeCreator(Graph);
-	UDD_DialogueGraphNode_Base* ResultRootNode = NodeCreator.CreateNode();
+	FGraphNodeCreator<UDD_DialogueBaseNode> NodeCreator(Graph);
+	UDD_DialogueBaseNode* ResultRootNode = NodeCreator.CreateNode();
 	ResultRootNode->NodePosY = RootNodeHeightOffset;
 	NodeCreator.Finalize();
 	SetNodeMetaData(ResultRootNode, FNodeMetadata::DefaultGraphNode);
@@ -155,10 +154,10 @@ void UDD_DialogueGraphSchema::GetAllDialogueActions(FGraphActionMenuBuilder& Act
 	}
 
 	TArray<UClass*> NodeClasses;
-	GetDerivedClasses(UDD_DialogueGraphNode_Base::StaticClass(), NodeClasses, true);
+	GetDerivedClasses(UDD_DialogueBaseNode::StaticClass(), NodeClasses, true);
 	NodeClasses.Sort();
 	
-	for(TSubclassOf<UDD_DialogueGraphNode_Base> BaseNode : NodeClasses)
+	for(TSubclassOf<UDD_DialogueBaseNode> BaseNode : NodeClasses)
 	{		
 		if(BaseNode->HasAnyClassFlags(CLASS_Hidden))
 			continue;
@@ -172,7 +171,7 @@ void UDD_DialogueGraphSchema::GetAllDialogueActions(FGraphActionMenuBuilder& Act
 				const FText AddToolTip = FText::Format(LOCTEXT("New Node", "Adds {Name} node here"), Arguments);
 				TSharedPtr<FEdGraphSchemaAction_NewNode> NewNodeAction(new FEdGraphSchemaAction_NewNode(LOCTEXT("DialogueNodeAction", "Dialogue Node"), Name, AddToolTip, 0));
 				ActionMenuBuilder.AddAction(NewNodeAction);
-				NewNodeAction->NodeTemplate = BaseNode->GetDefaultObject<UDD_DialogueGraphNode_Base>();
+				NewNodeAction->NodeTemplate = BaseNode->GetDefaultObject<UDD_DialogueBaseNode>();
 			}
 		}
 	}

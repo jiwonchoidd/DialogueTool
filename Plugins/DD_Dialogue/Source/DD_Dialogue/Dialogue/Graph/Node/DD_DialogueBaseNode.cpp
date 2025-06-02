@@ -1,18 +1,18 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DD_DialogueGraphNode.h"
+#include "DD_DialogueBaseNode.h"
 
-#include "DD_DialogueGraphSchema.h"
+#include "DD_Dialogue/Dialogue/Graph/DD_DialogueGraphSchema.h"
 
-void UDD_DialogueGraphNode_Base::AllocateDefaultPins()
+void UDD_DialogueBaseNode::AllocateDefaultPins()
 {
 	check(Pins.Num() == 0);
 
 	CreatePin(EGPD_Output, TEXT("DialogueNode"), TEXT("Output"));
 }
 
-void UDD_DialogueGraphNode_Base::ReconstructNode()
+void UDD_DialogueBaseNode::ReconstructNode()
 {
 	for (int32 PinIndex = 0; PinIndex < Pins.Num(); ++PinIndex)
 	{
@@ -51,7 +51,7 @@ void UDD_DialogueGraphNode_Base::ReconstructNode()
 	}
 }
 
-void UDD_DialogueGraphNode_Base::AutowireNewNode(UEdGraphPin* FromPin)
+void UDD_DialogueBaseNode::AutowireNewNode(UEdGraphPin* FromPin)
 {
 	if (FromPin != NULL)
 	{
@@ -90,24 +90,12 @@ void UDD_DialogueGraphNode_Base::AutowireNewNode(UEdGraphPin* FromPin)
 	}
 }
 
-bool UDD_DialogueGraphNode_Base::CanCreateUnderSpecifiedSchema(const UEdGraphSchema* Schema) const
+bool UDD_DialogueBaseNode::CanCreateUnderSpecifiedSchema(const UEdGraphSchema* Schema) const
 {
 	return Schema->IsA(UDD_DialogueGraphSchema::StaticClass());
 }
 
-FString UDD_DialogueGraphNode_Base::GetDocumentationLink() const
+FString UDD_DialogueBaseNode::GetDocumentationLink() const
 {
 	return Super::GetDocumentationLink();
 }
-
-//-----------------------------------------------------------------
-
-void UDD_TalkGraphNode::AllocateDefaultPins()
-{
-	check(Pins.Num() == 0);
-
-	CreatePin(EGPD_Input, TEXT("DialogueNode"), TEXT("Input"));
-	CreatePin(EGPD_Output, TEXT("DialogueNode"), TEXT("Output"));
-}
-
-//-----------------------------------------------------------------

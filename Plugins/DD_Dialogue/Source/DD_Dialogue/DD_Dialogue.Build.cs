@@ -38,6 +38,7 @@ public class DD_Dialogue : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"GraphEditor",
 			}
 			);
 		

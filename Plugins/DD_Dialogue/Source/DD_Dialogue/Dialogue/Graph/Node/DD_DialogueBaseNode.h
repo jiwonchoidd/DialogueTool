@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "EdGraph/EdGraphNode.h"
-#include "DD_DialogueGraphNode.generated.h"
+#include "DD_DialogueBaseNode.generated.h"
 
 /**
  * 
  */
 UCLASS(Hidden)
-class DD_DIALOGUE_API UDD_DialogueGraphNode_Base : public UEdGraphNode
+class DD_DIALOGUE_API UDD_DialogueBaseNode : public UEdGraphNode
 {
 	GENERATED_BODY()
 	
@@ -26,13 +26,3 @@ public:
 
 //----------------------------------------------------------------------------------------
 
-UCLASS()
-class DD_DIALOGUE_API UDD_TalkGraphNode : public UDD_DialogueGraphNode_Base
-{
-	GENERATED_BODY()
-	
-public:
-	// UEdGraphNode interface.
-	virtual void AllocateDefaultPins() override;
-	// End of UEdGraphNode interface.
-};
