@@ -3,6 +3,14 @@
 
 #include "DD_DialogueData.h"
 
-UDD_DialogueData::UDD_DialogueData(): Graph(nullptr)
+#include "Graph/DD_DialogueGraph.h"
+
+TArray<FString> UDD_DialogueData::GetDialogueInfo() const
 {
+	TArray<FString> Test;
+	if(Graph)
+	{
+		Graph->GetDialogueInfo(Test);
+	}
+	return Test;
 }

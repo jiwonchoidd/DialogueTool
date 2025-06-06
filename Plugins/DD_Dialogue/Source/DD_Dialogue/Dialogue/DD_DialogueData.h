@@ -14,8 +14,8 @@ class DD_DIALOGUE_API UDD_DialogueData : public UObject
 	GENERATED_BODY()
 
 public:
-	UDD_DialogueData();
-public:
+	TArray<FString> GetDialogueInfo() const;
+private:
 	UPROPERTY(EditAnywhere, Category = "TestValue")
 	TObjectPtr<class UDD_DialogueGraph>	Graph;
 	
